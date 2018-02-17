@@ -63,7 +63,8 @@ instance variables is a HangpersonGame expected to have?</summary>
 
 <br />
 
-In order to make this failing test pass you'll need to create getters and setters for the instance variables mentioned in the self check tests above.  Hint: use `attr_accessor`.  When you've done this successfully and saved `hangperson_game.rb`, `autotest` should wake up again and the examples that were previously failing should now be passing (green).
+In order to make this failing test pass you'll need to create getters and setters for the instance variables mentioned in the self check tests above.  
+Hint: use `attr_accessor`.  When you've done this successfully and saved `hangperson_game.rb`, `autotest` should wake up again and the examples that were previously failing should now be passing (green).
 
 Continue in this manner, removing `, :pending => true` from one or two examples at a time working your way down the specs, until you've implemented all the instance methods of the game class: `guess`, which processes a guess and modifies the instance variables `wrong_guesses` and `guesses` accordingly; `check_win_or_lose`, which returns one of the symbols `:win`, `:lose`, or `:play` depending on the current game state; and `word_with_guesses`, which substitutes the correct guesses made so far into the word.
 

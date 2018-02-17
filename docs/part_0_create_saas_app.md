@@ -1,24 +1,32 @@
 Part 0: Demystifying SaaS app creation
 ==============================
 
-**Goal:** Understand the steps needed to create, version, and deploy a SaaS app, including tracking the libraries it depends on so that your production and development environments are as similar as possible.
+**Goal:** Understand the steps needed to create, version, and deploy a SaaS app, including tracking the libraries it depends on so that 
+your production and development environments are as similar as possible.
 
 **What you will do:** Create a simple "hello world" app using the Sinatra framework, version it properly, and deploy it to Heroku.
 
 Creating and versioning a simple SaaS app
 -----------------------------------------
 
-SaaS apps are developed on your computer (or cloud-based IDE) but *deployed to production* on a server that others can access.  We try to minimize the differences between the development and production *environments*, to avoid difficult-to-diagnose problems in which something works one way on your development computer but a different way (or not at all) when that code is deployed to production.
+SaaS apps are developed on your computer (or cloud-based IDE) but *deployed to production* on a server that others can access.  We try to minimize 
+the differences between the development and production *environments*, to avoid difficult-to-diagnose problems in which something works one way on 
+your development computer but a different way (or not at all) when that code is deployed to production.
 
-We have two mechanisms for keeping the development and production environments consistent.  The first is *version control*, such as Git, for the app's code.  But since almost all apps also rely on *libraries* written by others, such as *gems* in the case of Ruby, we need a way to keep track of which versions of which libraries our app has been tested with, so that the same ones are used in development and production.
+We have two mechanisms for keeping the development and production environments consistent.  The first is *version control*, such as Git, for the app's code. 
+But since almost all apps also rely on *libraries* written by others, such as *gems* in the case of Ruby, we need a way to keep track of which versions of 
+which libraries our app has been tested with, so that the same ones are used in development and production.
 
-Happily, Ruby has a wonderful system for managing gem dependencies: a gem called **Bundler** looks for a file called `Gemfile` in the *app root directory* of each project.  The `Gemfile` contains a list of gems and versions your app depends on. Bundler verifies that those gems, and any others that they in turn depend on, are properly installed on your system and accessible to the app.
+Happily, Ruby has a wonderful system for managing gem dependencies: a gem called **Bundler** looks for a file called `Gemfile` in the *app root directory* o
+f each project.  The `Gemfile` contains a list of gems and versions your app depends on. Bundler verifies that those gems, and any others that they in turn 
+depend on, are properly installed on your system and accessible to the app.
 
 Let's start with the following steps:
 
 * Create a new empty directory to hold your new app, and use `git init` in that directory to start versioning it with Git.
 
-* In that directory, create a new file called `Gemfile` (the capitalization is important) with the following contents.  This file will be a permanent part of your app and will travel with your app anywhere it goes:
+* In that directory, create a new file called `Gemfile` (the capitalization is important) with the following contents.  This file will be a permanent part of your app 
+* and will travel with your app anywhere it goes:
 
 ```rb
 source 'https://rubygems.org'
@@ -29,14 +37,17 @@ gem 'sinatra', '>= 1.4'
 
 The first line says that the preferred place to download any necessary gems is https://rubygems.org, which is where the Ruby community registers "production ready" gems.
 
-The second line specifies which version of the Ruby language interpreter is required.  If we omitted this line, Bundler wouldn't try to verify which version of Ruby is available; there are subtle differences between the versions, and not all gems work with all versions, so it's best to specify this.
+The second line specifies which version of the Ruby language interpreter is required.  If we omitted this line, Bundler wouldn't try to verify which version of Ruby is 
+available; there are subtle differences between the versions, and not all gems work with all versions, so it's best to specify this.
 
-The last line says we need version 1.4 or later of the `sinatra` gem. In some cases we don't need to specify which version of a gem we want; in this case we do specify it because we rely on some features that are absent from earlier versions of Sinatra.
+The last line says we need version 1.4 or later of the `sinatra` gem. In some cases we don't need to specify which version of a gem we want; in this case we do specify 
+it because we rely on some features that are absent from earlier versions of Sinatra.
 
 Run Bundler
 -----------
 
-Run the command `bundle`, which examines your `Gemfile` to make sure the correct gems (and, where specified, the correct versions) are available, and tries to install them otherwise.  This will create a new file `Gemfile.lock`, *which you should place under version control.*
+Run the command `bundle`, which examines your `Gemfile` to make sure the correct gems (and, where specified, the correct versions) are available, and tries to install them 
+otherwise.  This will create a new file `Gemfile.lock`, *which you should place under version control.*
 
 To place under version control, use these commands:
 
@@ -45,7 +56,9 @@ $ git add .
 $ git commit -m "Set up the Gemfile"
 ```
 
-The first command stages all changed files for committing. The second command commits the staged files with the comment in the quotes. You can repeat these commands to commit future changes. Remember that these are LOCAL commits -- if you want these changes on GitHub, you'll need to do a git push command, which we will show later.
+The first command stages all changed files for committing. 
+The second command commits the staged files with the comment in the quotes. You can repeat these commands to commit future changes. 
+Remember that these are LOCAL commits -- if you want these changes on GitHub, you'll need to do a git push command, which we will show later.
 
 #### Self Check Questions (click triangle to check your answer)
 
@@ -64,9 +77,13 @@ that were not listed in <code>Gemfile</code>?</summary>
 Create a simple SaaS app with Sinatra
 -------------------------------------
 
-As Chapter 2 of ESaaS explains, SaaS apps require a web server to receive HTTP requests from the outside world, and an application server that "connects" your app's logic to the web server.  For development, we will use `webrick`, a very simple Ruby-based web server that would be inappropriate for production but is fine for development.  In both development and production, we will use the `rack` Ruby-based application server, which supports Ruby apps written in various frameworks including Sinatra and Rails.
+As Chapter 2 of ESaaS explains, SaaS apps require a web server to receive HTTP requests from the outside world, and an application server that "connects" your app's
+logic to the web server.  For development, we will use `webrick`, a very simple Ruby-based web server that would be inappropriate for production but is fine for development.  
+In both development and production, we will use the `rack` Ruby-based application server, which supports Ruby apps written in various frameworks including Sinatra and Rails.
 
-As Chapter 2 of *ESaaS* explains, a SaaS app essentially recognizes and responds to HTTP requests corresponding to the application's *routes* (recall that a route consists of an HTTP method such as `GET` or `POST` plus a URI).  Sinatra provides an extremely lightweight shorthand for matching a route with the app code to be executed when a request using that route arrives from the Web server.
+As Chapter 2 of *ESaaS* explains, a SaaS app essentially recognizes and responds to HTTP requests corresponding to the application's *routes* (recall that a route consists 
+of an HTTP method such as `GET` or `POST` plus a URI).  Sinatra provides an extremely lightweight shorthand for matching a route with the app code to be executed when a request 
+using that route arrives from the Web server.
 
 Create a file in your project called `app.rb` containing the following:
 
@@ -167,7 +184,8 @@ While in the root directory of your project (not your whole workspace), type `he
 
 Next, make sure you stage and commit all changes locally as instructed above (i.e. `git add`, `git commit`, etc).
 
-Earlier we saw that to run the app locally you run `rackup` to start the Rack appserver, and Rack looks in `config.ru` to determine how to start your Sinatra app.  How do you tell a production environment how to start an appserver or other processes necessary to receive requests and start your app?  In the case of Heroku, this is done with a special file named `Procfile`,  which specifies one or more types of Heroku processes your app will use, and how to start each one. The most basic Heroku process type is called a Dyno, or "web worker".  One Dyno can serve one user request at a time.  Since we're on Heroku's free tier, we can only have one Dyno. Let's create a file named `Procfile`, and only this as the name (i.e. Procfile.txt is not valid). Write the following line in your `Procfile`:
+Earlier we saw that to run the app locally you run `rackup` to start the Rack appserver, and Rack looks in `config.ru` to determine how to start your Sinatra app.  How do you tell a production environment how to start an appserver or other processes necessary to receive requests and start your app?  In the case of Heroku, this is done with a special file named `Procfile`,  which specifies one or more types of Heroku processes your app will use, and how to start each one. The most basic Heroku process type is called a Dyno, or "web worker".  One Dyno can serve one user request at a time.  Since we're on Heroku's free tier, we can only have one Dyno. 
+Let's create a file named `Procfile`, and only this as the name (i.e. Procfile.txt is not valid). Write the following line in your `Procfile`:
 
 ```
 web: bundle exec rackup config.ru -p $PORT
